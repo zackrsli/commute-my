@@ -123,7 +123,7 @@ export default function Home() {
                             <Button.Root className="mt-6 w-full" type="submit" disabled={!originCoords || !destinationCoords}>
                                 <Button.Text>Search Route</Button.Text>
                             </Button.Root>
-                            <p className="text-yellow-500 mt-2 text-xs">This feature is still in beta. Please report any issues you encounter in the <a href="https://github.com/commute-app/commute/issues" target="_blank" rel="noopener noreferrer" className="text-steel-blue-300 hover:text-steel-blue-200 transition-colors">GitHub repository</a>.</p>
+                            <p className="text-yellow-500 mt-2 text-xs">This feature is still in beta. Please report any issues you encounter in the <a href="https://github.com/zackrsli/commute-my/issues" target="_blank" rel="noopener noreferrer" className="text-steel-blue-300 hover:text-steel-blue-200 transition-colors">GitHub repository</a>.</p>
                         </form>
                     </div>
                     <div className="mt-4 md:mt-0">

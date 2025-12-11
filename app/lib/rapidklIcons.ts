@@ -4,17 +4,17 @@
  */
 
 export const RAPIDKL_LINE_ICONS: Record<string, string> = {
-    "AG": "https://myrapid.com.my/wp-content/uploads/2020/12/icon_line_ampang.png",
-    "SP": "https://myrapid.com.my/wp-content/uploads/2021/04/icon_line_sri-petaling.png",
-    "KJ": "https://myrapid.com.my/wp-content/uploads/2020/12/icon_line_kelana-jaya.png",
-    "MR": "https://myrapid.com.my/wp-content/uploads/2020/12/icon_line_kl-monorail.png",
-    "KG": "https://myrapid.com.my/wp-content/uploads/2020/12/icon_line_kajang-01.png",
-    "PY": "https://myrapid.com.my/wp-content/uploads/2020/12/icon_line_putrajaya-01.png",
+    "AG": "/icons/rapidkl/icon_line_ampang.png",
+    "SP": "/icons/rapidkl/icon_line_sri-petaling.png",
+    "KJ": "/icons/rapidkl/icon_line_kelana-jaya.png",
+    "MR": "/icons/rapidkl/icon_line_kl-monorail.png",
+    "KG": "/icons/rapidkl/icon_line_kajang-01.png",
+    "PY": "/icons/rapidkl/icon_line_putrajaya-01.png",
 };
 
 export const RAPIDKL_STATION_ICONS = {
-    interchange: "https://myrapid.com.my/wp-content/uploads/2020/12/icon_interchange-station.png",
-    connecting: "https://myrapid.com.my/wp-content/uploads/2020/12/icon_connecting-station.png",
+    interchange: "/icons/rapidkl/icon_interchange-station.png",
+    connecting: "/icons/rapidkl/icon_connecting-station.png",
 };
 
 // RapidKL official line colors (extracted from their branding)
