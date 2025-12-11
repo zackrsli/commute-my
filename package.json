@@ -10,8 +10,10 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal public/logo.svg"
   },
   "dependencies": {
+    "@motis-project/motis-client": "^2.7.6",
     "@react-router/cloudflare": "^7.1.1",
     "@react-router/serve": "^7.1.1",
+    "@tanstack/react-query": "^5.90.12",
     "class-variance-authority": "^0.7.1",
     "isbot": "^5.1.17",
     "lucide-react": "^0.473.0",

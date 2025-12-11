@@ -1,9 +1,10 @@
 import type { Route } from "./+types/home";
 import { getLineById, getLineByStation, getStation } from "~/lib/line";
 import { Link, useParams } from "react-router";
-import { Train, ShoppingBag, Building, TreesIcon as Tree, ArrowLeftFromLine, Footprints, ArrowUpDown, MapPin, Clock, MoonStar } from "lucide-react";
+import { ShoppingBag, Building, TreesIcon as Tree, ArrowLeftFromLine, MapPin, Clock, MoonStar } from "lucide-react";
 import { useNavigate } from "react-router";
 import { TransitionWrapper } from "~/components/TransitionWrapper";
+import { getLineIconUrl, getLineColor, RAPIDKL_STATION_ICONS } from "~/lib/rapidklIcons";
 
 const icons = {
     mall: ShoppingBag,
@@ -44,33 +45,57 @@ export default function Line() {
                     Back
                 </button>
                 {line ? (
-                    <div className="flex flex-col space-y-8 mt-8">
+                    <div className="flex flex-col mt-8">
                         {line.stations.map((station, index) => (
                             <div id={station.id} key={station.id} className="flex space-x-4">
-                                <div className="flex flex-col items-center min-h-max">
-                                    <div className={`w-8 h-8 rounded-full ${line.bgColor} flex items-center justify-center`}>
-                                        <Train className="w-5 h-5 text-white" />
+                                <div className="flex flex-col items-center">
+                                    <div 
+                                        className="flex items-center justify-center gap-2 px-2 py-1 rounded"
+                                        style={{ backgroundColor: getLineColor(line.id) }}
+                                    >
+                                        <img 
+                                            src={getLineIconUrl(line.id)} 
+                                            alt={`${line.name} Line`}
+                                            className="w-5 h-5 object-contain"
+                                        />
+                                        <span 
+                                            className="text-sm font-mono font-semibold text-white"
+                                        >
+                                            {station.id}
+                                        </span>
                                     </div>
-                                    <div className="flex-grow">
-                                        {index < line.stations.length - 1 && <div className={`w-1 ${station.nearby || station.connectingStations || station.interchangeStations ? "h-full": "h-6"} ${line.bgColor} mt-2`} />}
-                                    </div>
+                                    {index < line.stations.length - 1 && (
+                                        <div 
+                                            className="w-1 flex-1 flex justify-center"
+                                            style={{ 
+                                                backgroundColor: getLineColor(line.id),
+                                                minHeight: '24px',
+                                                marginTop: '2px'
+                                            }}
+                                        />
+                                    )}
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold">
-                                        {station.name} {station.id}
-                                    </h3>
+                                <div className="flex-1 pb-6">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <h3 className="text-lg font-semibold text-white">
+                                            {station.name}
+                                        </h3>
+                                    </div>
                                     <div className="mt-2 space-y-4">
                                         {station.nearby && (
                                             <div className="space-y-2">
-                                                <h3 className="flex items-center"><MapPin className="w-4 h-4 mr-2" />Nearby Highlights</h3>
+                                                <h3 className="flex items-center text-sm font-medium text-gray-300">
+                                                    <MapPin className="w-4 h-4 mr-2" />
+                                                    Nearby Highlights
+                                                </h3>
                                                 <div className="grid md:grid-cols-4 gap-2 md:gap-4 mt-2">
                                                     {station.nearby.map((place, ix) => {
                                                         const Icon = getNearbyIcon(place);
 
                                                         return (
-                                                            <div key={ix} className={`flex items-center space-x-2 bg-gray-800 px-5 py-2 rounded-lg w-full min-w-0`}>
-                                                                <Icon className="w-4 h-4 flex-shrink-0" />
-                                                                <span className="text-sm truncate min-w-0">{place}</span>
+                                                            <div key={ix} className={`flex items-center space-x-2 bg-dark-800 px-4 py-2 rounded-lg w-full min-w-0`}>
+                                                                <Icon className="w-4 h-4 flex-shrink-0 text-white" />
+                                                                <span className="text-sm truncate min-w-0 text-white">{place}</span>
                                                             </div>
                                                         )
                                                     })}
@@ -79,7 +104,10 @@ export default function Line() {
                                         )}
                                         {station.mosques && (
                                             <div className="space-y-2">
-                                                <h3 className="flex items-center"><MoonStar className="w-4 h-4 mr-2" />Nearby Mosques</h3>
+                                                <h3 className="flex items-center text-sm font-medium text-gray-300">
+                                                    <MoonStar className="w-4 h-4 mr-2" />
+                                                    Nearby Mosques
+                                                </h3>
                                                 <div className="grid md:grid-cols-4 gap-2 md:gap-4 mt-2">
                                                     {station.mosques.map((mosque, ix) => (
                                                         <a 
@@ -87,11 +115,11 @@ export default function Line() {
                                                             href={getMosqueGoogleMapsUrl(mosque.name, mosque.lat, mosque.lng)}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="bg-gray-800 px-5 py-3 rounded-lg space-y-2 hover:bg-gray-700 transition-colors"
+                                                            className="bg-dark-800 px-4 py-3 rounded-lg space-y-2 hover:bg-dark-700 transition-colors"
                                                         >
                                                             <div className="flex items-center space-x-2">
-                                                                <MoonStar className="w-4 h-4 flex-shrink-0" />
-                                                                <span className="text-sm font-medium">{mosque.name}</span>
+                                                                <MapPin className="w-4 h-4 flex-shrink-0 text-white" />
+                                                                <span className="text-sm font-medium text-white">{mosque.name}</span>
                                                             </div>
                                                             <div className="flex items-center space-x-2 text-gray-400">
                                                                 <MapPin className="w-3 h-3 flex-shrink-0" />
@@ -108,16 +136,32 @@ export default function Line() {
                                         )}
                                         {station.interchangeStations && (
                                             <div className="space-y-2">
-                                                <h3 className="flex items-center"><ArrowUpDown className="w-4 h-4 mr-2" /> Interchange Stations</h3>
+                                                <h3 className="flex items-center text-sm font-medium text-gray-300">
+                                                    <img 
+                                                        src={RAPIDKL_STATION_ICONS.interchange} 
+                                                        alt="Interchange"
+                                                        className="w-4 h-4 mr-2 object-contain"
+                                                    />
+                                                    Interchange Stations
+                                                </h3>
                                                 <div className="grid md:grid-cols-4 gap-2 md:gap-4 mt-2">
                                                     {station.interchangeStations.map((intStationId) => {
                                                         const intStation = getStation(intStationId);
-                                                        const line = getLineByStation(intStationId);
+                                                        const intLine = getLineByStation(intStationId);
 
-                                                        return intStation && line && (
-                                                            <Link to={`/line/${line.id}#${intStation.id}`} key={intStation.id} className={`flex items-center space-x-2 ${line.bgColor} bg-opacity-50 px-5 py-2 rounded-lg hover:bg-opacity-60 duration-300 ease-in-out`}>
-                                                                <Train className="w-4 h-4" />
-                                                                <span className="text-sm">{line.type} {intStation.name} {intStation.id}</span>
+                                                        return intStation && intLine && (
+                                                            <Link 
+                                                                to={`/line/${intLine.id}#${intStation.id}`} 
+                                                                key={intStation.id} 
+                                                                className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:opacity-80 duration-300 ease-in-out transition-opacity"
+                                                                style={{ backgroundColor: getLineColor(intLine.id) }}
+                                                            >
+                                                                <img 
+                                                                    src={getLineIconUrl(intLine.id)} 
+                                                                    alt={`${intLine.name} Line`}
+                                                                    className="w-4 h-4 object-contain"
+                                                                />
+                                                                <span className="text-sm text-white font-medium">{intLine.type} {intStation.name} {intStation.id}</span>
                                                             </Link>
                                                         );
                                                     })}
@@ -126,16 +170,32 @@ export default function Line() {
                                         )}
                                         {station.connectingStations && (
                                             <div className="space-y-2">
-                                                <h3 className="flex items-center"><Footprints className="w-4 h-4 mr-2" /> Connecting Stations</h3>
+                                                <h3 className="flex items-center text-sm font-medium text-gray-300">
+                                                    <img 
+                                                        src={RAPIDKL_STATION_ICONS.connecting} 
+                                                        alt="Connecting"
+                                                        className="w-4 h-4 mr-2 object-contain"
+                                                    />
+                                                    Connecting Stations
+                                                </h3>
                                                 <div className="grid md:grid-cols-4 gap-2 md:gap-4 mt-2">
                                                     {station.connectingStations.map((connStationId) => {
                                                         const connStation = getStation(connStationId);
-                                                        const line = getLineByStation(connStationId);
+                                                        const connLine = getLineByStation(connStationId);
 
-                                                        return connStation && line && (
-                                                            <Link to={`/line/${line.id}#${connStation.id}`} key={connStation.id} className={`flex items-center space-x-2 ${line.bgColor} bg-opacity-50 px-5 py-2 rounded-lg hover:bg-opacity-60 duration-300 ease-in-out`}>
-                                                                <Train className="w-4 h-4" />
-                                                                <span className="text-sm">{line.type} {connStation.name} {connStation.id}</span>
+                                                        return connStation && connLine && (
+                                                            <Link 
+                                                                to={`/line/${connLine.id}#${connStation.id}`} 
+                                                                key={connStation.id} 
+                                                                className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:opacity-80 duration-300 ease-in-out transition-opacity"
+                                                                style={{ backgroundColor: getLineColor(connLine.id) }}
+                                                            >
+                                                                <img 
+                                                                    src={getLineIconUrl(connLine.id)} 
+                                                                    alt={`${connLine.name} Line`}
+                                                                    className="w-4 h-4 object-contain"
+                                                                />
+                                                                <span className="text-sm text-white font-medium">{connLine.type} {connStation.name} {connStation.id}</span>
                                                             </Link>
                                                         );
                                                     })}
@@ -150,7 +210,6 @@ export default function Line() {
                 ): (
                     <p>Line not found.</p>
                 )}
-                <p className="text-xs mt-12">&copy; {new Date().getFullYear()} Zackry Rosli. All rights reserved.</p>
             </TransitionWrapper>
         </main>
     );
