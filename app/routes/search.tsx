@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useNavigate, Link } from "react-router";
 import { TransitionWrapper } from "~/components/TransitionWrapper";
@@ -35,7 +35,10 @@ export default function Search() {
     
     const getDefaultDate = () => {
         const now = new Date();
-        return now.toISOString().split('T')[0];
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
     
     const getDefaultTime = () => {
@@ -47,6 +50,9 @@ export default function Search() {
     
     const [departureDate, setDepartureDate] = useState(departureDateParam || getDefaultDate());
     const [departureTime, setDepartureTime] = useState(departureTimeParam || getDefaultTime());
+    
+    const dateDebounceRef = useRef<NodeJS.Timeout | null>(null);
+    const timeDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         setOriginValue(originName);
@@ -64,6 +70,17 @@ export default function Search() {
             setDepartureTime(departureTimeParam);
         }
     }, [departureDateParam, departureTimeParam]);
+    
+    useEffect(() => {
+        return () => {
+            if (dateDebounceRef.current) {
+                clearTimeout(dateDebounceRef.current);
+            }
+            if (timeDebounceRef.current) {
+                clearTimeout(timeDebounceRef.current);
+            }
+        };
+    }, []);
 
     const origin: Location | null = 
         !isNaN(originLat) && !isNaN(originLng) 
@@ -105,20 +122,38 @@ export default function Search() {
     
     const handleDepartureDateChange = (date: string) => {
         setDepartureDate(date);
-        const params = new URLSearchParams(searchParams);
-        params.set("departureDate", date);
-        setSearchParams(params);
+        
+        if (dateDebounceRef.current) {
+            clearTimeout(dateDebounceRef.current);
+        }
+        
+        dateDebounceRef.current = setTimeout(() => {
+            const params = new URLSearchParams(searchParams);
+            params.set("departureDate", date);
+            setSearchParams(params);
+        }, 500);
     };
     
     const handleDepartureTimeChange = (time: string) => {
         setDepartureTime(time);
-        const params = new URLSearchParams(searchParams);
-        params.set("departureTime", time);
-        setSearchParams(params);
+        
+        if (timeDebounceRef.current) {
+            clearTimeout(timeDebounceRef.current);
+        }
+        
+        timeDebounceRef.current = setTimeout(() => {
+            const params = new URLSearchParams(searchParams);
+            params.set("departureTime", time);
+            setSearchParams(params);
+        }, 500);
     };
 
     const departureDateTime = departureDate && departureTime 
-        ? new Date(`${departureDate}T${departureTime}`)
+        ? (() => {
+            const [year, month, day] = departureDate.split('-').map(Number);
+            const [hours, minutes] = departureTime.split(':').map(Number);
+            return new Date(year, month - 1, day, hours, minutes);
+        })()
         : undefined;
 
     const { data, isLoading, error } = useQuery<PlanResponse>({
